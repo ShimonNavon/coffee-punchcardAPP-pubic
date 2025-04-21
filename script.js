@@ -18,18 +18,11 @@ function updateStatus() {
   }
 }
 
-function addCoffee() {
-  let count = getCoffees();
-  if (count < MAX_COFFEES) {
-    count++;
-    setCoffees(count);
-    updateStatus();
-  }
-}
-
-function resetCard() {
-  setCoffees(0);
-  updateStatus();
+// Auto-increment on load
+let count = getCoffees();
+if (count < MAX_COFFEES) {
+  count++;
+  setCoffees(count);
 }
 
 updateStatus();
