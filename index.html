@@ -8,15 +8,27 @@
 </head>
 <body>
   <div class="card">
-    <h1>☕ Coffee Punch Card</h1>
+    <!-- —— header area —— -->
+    <div class="card-header">
+      <img
+        src="logo.jpeg"
+        alt="CoffeeBeans logo"
+        class="logo"
+        style="--logo-width: 60px;"
+      >
+      <h2 class="company-name">CoffeeBeans</h2>
+    </div>
+
+    <!-- rest of your card… -->
     <p id="status">Loading...</p>
     <div class="cups" id="cups"></div>
-    <p class="note">This card updates automatically each time you scan the QR code.</p>
+    <p class="note">
+      This card updates automatically each time you scan the QR code.
+    </p>
   </div>
 
-  <!-- Load confetti first -->
+  <!-- Load confetti library before script.js -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Then load your script -->
   <script src="script.js"></script>
 </body>
 </html>
