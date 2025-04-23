@@ -1,59 +1,75 @@
 const MAX_COFFEES = 10;
+const STORAGE_KEY = 'filledCups';
 
-function getCoffees() {
-  return parseInt(localStorage.getItem('coffees') || '0');
+// Retrieve array of filled indices from localStorage
+function getFilled() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch {
+    return [];
+  }
 }
 
-function setCoffees(n) {
-  localStorage.setItem('coffees', n);
+// Save array of filled indices
+function setFilled(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
 }
 
+// Pick one random unfilled cup and mark it filled
+function punchRandom() {
+  const filled = getFilled();
+  if (filled.length >= MAX_COFFEES) return filled;
+
+  // compute array of remaining indices
+  const remaining = [];
+  for (let i = 0; i < MAX_COFFEES; i++) {
+    if (!filled.includes(i)) remaining.push(i);
+  }
+
+  // pick a random slot
+  const pick = remaining[Math.floor(Math.random() * remaining.length)];
+  filled.push(pick);
+  setFilled(filled);
+  return filled;
+}
+
+// Render status text and cups
 function updateStatus() {
-  const count = getCoffees();
+  const filled = getFilled();
+  const count = filled.length;
   const status = document.getElementById('status');
   const cupsContainer = document.getElementById('cups');
 
   // Text message
   if (count >= MAX_COFFEES) {
-    status.innerHTML = `🎉 You’ve earned a free coffee! (${count}/${MAX_COFFEES})`;
+    status.textContent = `🎉 You’ve earned a free coffee! (${count}/${MAX_COFFEES})`;
   } else {
-    status.innerHTML = `You’ve had ${count} of ${MAX_COFFEES} coffees.`;
+    status.textContent = `You’ve had ${count} of ${MAX_COFFEES} coffees.`;
   }
 
-  // Icons
+  // Icons row
   cupsContainer.innerHTML = '';
   for (let i = 0; i < MAX_COFFEES; i++) {
     const cup = document.createElement('span');
     cup.classList.add('cup');
-    if (i < count) cup.classList.add('filled');
-    cup.innerText = '☕';
+    if (filled.includes(i)) cup.classList.add('filled');
+    cup.textContent = '☕';
     cupsContainer.appendChild(cup);
   }
 
-  // 🎉 Celebration effect + confetti
+  // Celebration + confetti
   if (count === MAX_COFFEES) {
-    document.body.classList.add('celebrate');
-
-    // Show confetti once
     if (!window._confettiShown) {
-      confetti({
-        particleCount: 150,
-        spread: 100,
-        origin: { y: 0.6 }
-      });
+      confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
       window._confettiShown = true;
     }
   } else {
-    document.body.classList.remove('celebrate');
     window._confettiShown = false;
   }
 }
 
-// Auto-increment on page load
-let count = getCoffees();
-if (count < MAX_COFFEES) {
-  count++;
-  setCoffees(count);
-}
-
-updateStatus();
+// On load: punch one random cup, then render
+document.addEventListener('DOMContentLoaded', () => {
+  punchRandom();
+  updateStatus();
+});
