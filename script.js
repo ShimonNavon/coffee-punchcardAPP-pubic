@@ -29,6 +29,24 @@ function updateStatus() {
     cup.innerText = '☕';
     cupsContainer.appendChild(cup);
   }
+
+  // 🎉 Celebration effect + confetti
+  if (count === MAX_COFFEES) {
+    document.body.classList.add('celebrate');
+
+    // Show confetti once
+    if (!window._confettiShown) {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+      window._confettiShown = true;
+    }
+  } else {
+    document.body.classList.remove('celebrate');
+    window._confettiShown = false;
+  }
 }
 
 // Auto-increment on page load
