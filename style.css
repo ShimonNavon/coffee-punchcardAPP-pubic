@@ -1,7 +1,20 @@
 /* page background + centering */
 body {
   margin: 0;
-  background: #fff8f0;
+  /* old light-brown background, commented out */
+  /* background: #fff8f0; */
+
+  /* Rasta/Reggae diagonal stripes */
+  background: repeating-linear-gradient(
+    135deg,
+    #ff0000,
+    #ff0000 20px,
+    #ffff00 20px,
+    #ffff00 40px,
+    #008000 40px,
+    #008000 60px
+  );
+  
   font-family: 'Segoe UI', sans-serif;
   display: flex;
   justify-content: center;
@@ -19,13 +32,13 @@ body {
   overflow: hidden;
 }
 
-/* header */
+/* —— header inside the white card —— */
 .card-header {
   text-align: center;
   padding: 16px 0;
 }
 
-/* logo */
+/* profile-style logo */
 .logo {
   width: var(--logo-width, 60px);
   height: auto;
@@ -34,7 +47,7 @@ body {
   margin: 0 auto 12px;
 }
 
-/* shop name */
+/* your shop name */
 .company-name {
   font-size: 1.8em;
   font-weight: bold;
@@ -42,7 +55,7 @@ body {
   margin: 0;
 }
 
-/* status text */
+/* —— punch-card content —— */
 #status {
   font-size: 1.2em;
   color: #444;
@@ -50,7 +63,6 @@ body {
   margin: 16px 0 12px;
 }
 
-/* cups container */
 .cups {
   display: flex;
   justify-content: center;
@@ -59,20 +71,17 @@ body {
   margin-bottom: 12px;
 }
 
-/* greyed-out cups by default */
 .cup {
   font-size: 2em;
   transition: transform 0.3s, filter 0.3s;
-  filter: grayscale(100%);
+  filter: grayscale(100%); /* start B&W */
 }
 
-/* filled cups pop & go full-color */
 .cup.filled {
   transform: scale(1.2);
-  filter: none;
+  filter: none;            /* full color when punched */
 }
 
-/* note at bottom */
 .note {
   font-size: 0.95em;
   color: #777;
