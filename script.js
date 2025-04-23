@@ -20,13 +20,11 @@ function punchRandom() {
   const filled = getFilled();
   if (filled.length >= MAX_COFFEES) return filled;
 
-  // compute array of remaining indices
   const remaining = [];
   for (let i = 0; i < MAX_COFFEES; i++) {
     if (!filled.includes(i)) remaining.push(i);
   }
 
-  // pick a random slot
   const pick = remaining[Math.floor(Math.random() * remaining.length)];
   filled.push(pick);
   setFilled(filled);
@@ -40,24 +38,26 @@ function updateStatus() {
   const status = document.getElementById('status');
   const cupsContainer = document.getElementById('cups');
 
-  // Text message
+  // ——— status message ———
   if (count >= MAX_COFFEES) {
     status.textContent = `🎉 You’ve earned a free coffee! (${count}/${MAX_COFFEES})`;
   } else {
     status.textContent = `You’ve had ${count} of ${MAX_COFFEES} coffees.`;
   }
 
-  // Icons row
+  // ——— cups row ———
   cupsContainer.innerHTML = '';
   for (let i = 0; i < MAX_COFFEES; i++) {
     const cup = document.createElement('span');
     cup.classList.add('cup');
-    if (filled.includes(i)) cup.classList.add('filled');
     cup.textContent = '☕';
+    if (filled.includes(i)) {
+      cup.classList.add('filled');
+    }
     cupsContainer.appendChild(cup);
   }
 
-  // Celebration + confetti
+  // ——— confetti on completion ———
   if (count === MAX_COFFEES) {
     if (!window._confettiShown) {
       confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });

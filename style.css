@@ -74,13 +74,15 @@ body {
 
 .cup {
   font-size: 2em;
-  transition: transform 0.3s, filter 0.3s;
-  filter: grayscale(100%); /* start B&W */
+  display: inline-block;                  /* ensure transform works smoothly */
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0.2;                           /* start very faded */
 }
 
 .cup.filled {
   transform: scale(1.2);
-  filter: none;            /* full color when punched */
+  opacity: 1;                             /* fade into full color */
+  /* you can drop the `filter: none` since we’re not using grayscale here */
 }
 
 .note {
