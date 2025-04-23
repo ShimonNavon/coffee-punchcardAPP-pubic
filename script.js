@@ -31,7 +31,7 @@ function punchRandom() {
   return filled;
 }
 
-// Render status text and cups
+// Render status text, cups, confetti—and the reset link when full
 function updateStatus() {
   const filled = getFilled();
   const count = filled.length;
@@ -51,9 +51,7 @@ function updateStatus() {
     const cup = document.createElement('span');
     cup.classList.add('cup');
     cup.textContent = '☕';
-    if (filled.includes(i)) {
-      cup.classList.add('filled');
-    }
+    if (filled.includes(i)) cup.classList.add('filled');
     cupsContainer.appendChild(cup);
   }
 
@@ -65,6 +63,38 @@ function updateStatus() {
     }
   } else {
     window._confettiShown = false;
+  }
+
+  // ——— reset link logic ———
+  // remove any old link
+  const old = document.getElementById('reset-link');
+  if (old) old.remove();
+
+  if (count >= MAX_COFFEES) {
+    // append a Reset link to the card
+    const card = cupsContainer.closest('.card');
+    const resetLink = document.createElement('a');
+    resetLink.id = 'reset-link';
+    resetLink.href = '#';
+    resetLink.textContent = '🔄 Reset Card';
+    resetLink.style.display = 'block';
+    resetLink.style.textAlign = 'center';
+    resetLink.style.margin = '12px 0';
+    resetLink.style.cursor = 'pointer';
+
+    resetLink.addEventListener('click', e => {
+      e.preventDefault();
+      const code = prompt('Barista code to reset:');
+      if (code === '1234') {
+        localStorage.removeItem(STORAGE_KEY);
+        sessionStorage.removeItem('didPunch');
+        updateStatus();
+      } else {
+        alert('❌ Incorrect code.');
+      }
+    });
+
+    card.appendChild(resetLink);
   }
 }
 
