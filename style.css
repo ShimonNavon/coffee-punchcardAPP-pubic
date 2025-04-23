@@ -81,8 +81,8 @@ body {
 
 .cup.filled {
   transform: scale(1.2);
-  opacity: 1;                             /* fade into full color */
-  /* you can drop the `filter: none` since we’re not using grayscale here */
+  opacity: 1;              /* fade in to full opacity */
+  /* filter: none;  you can leave this if you were using grayscale before */
 }
 
 .note {
