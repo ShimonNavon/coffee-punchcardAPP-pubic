@@ -68,8 +68,21 @@ function updateStatus() {
   }
 }
 
-// On load: punch one random cup, then render
+// On load: only punch if ?punch=1 and not already done this session
 document.addEventListener('DOMContentLoaded', () => {
-  punchRandom();
+  const url = new URL(window.location.href);
+
+  if (
+    url.searchParams.get('punch') === '1' &&
+    !sessionStorage.getItem('didPunch')
+  ) {
+    punchRandom();
+    sessionStorage.setItem('didPunch', '1');
+
+    // clean the URL so refresh won't re-fire the punch
+    url.searchParams.delete('punch');
+    history.replaceState(null, '', url.pathname);
+  }
+
   updateStatus();
 });
