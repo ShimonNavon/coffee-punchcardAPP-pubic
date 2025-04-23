@@ -7,12 +7,13 @@ body {
   /* Rasta/Reggae diagonal stripes */
   background: repeating-linear-gradient(
     135deg,
-    #ff0000,
-    #ff0000 20px,
-    #ffff00 20px,
-    #ffff00 40px,
-    #008000 40px,
-    #008000 60px
+/* replace your old stops with these: */
+#9ED9CC,    /* mint background  */
+#9ED9CC 20px,
+#F7F6F2,    /* ribbon white-ish */
+#F7F6F2 40px,
+#72C1AA,    /* deeper mint accent */
+#72C1AA 60px
   );
   
   font-family: 'Segoe UI', sans-serif;
