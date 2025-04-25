@@ -1,125 +1,116 @@
-const MAX_COFFEES = 10;
-const STORAGE_KEY = 'filledCups';
-const STAR_KEY    = 'starCount';
+(() => {
+  const MAX_COFFEES = 10;
+  const STORAGE_KEY = 'filledCups';
+  const STAR_KEY    = 'starCount';
 
-// — star helpers —
-function getStars() {
-  return parseInt(localStorage.getItem(STAR_KEY), 10) || 0;
-}
-function setStars(n) {
-  localStorage.setItem(STAR_KEY, n);
-}
-function updateStars() {
-  const starsContainer = document.getElementById('stars');
-  const starCount = getStars();
-  starsContainer.innerHTML = '';
-  for (let i = 0; i < starCount; i++) {
-    const s = document.createElement('span');
-    s.classList.add('star');
-    s.textContent = '⭐';
-    starsContainer.appendChild(s);
-  }
-}
+  // cache DOM nodes
+  const statusEl = document.getElementById('status');
+  const cupsEl   = document.getElementById('cups');
+  const starsEl  = document.getElementById('stars');
+  let resetLinkEl;
 
-// Retrieve array of filled indices
-function getFilled() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    return [];
-  }
-}
-function setFilled(arr) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-}
+  // simple storage helper
+  const store = {
+    getArray: key => {
+      try { return JSON.parse(localStorage.getItem(key)) || []; }
+      catch { return []; }
+    },
+    setArray: (key, arr) => {
+      localStorage.setItem(key, JSON.stringify(arr));
+    },
+    getNum: key => parseInt(localStorage.getItem(key), 10) || 0,
+    setNum: (key, n) => localStorage.setItem(key, n)
+  };
 
-// Add one random punch + confetti
-function punchRandom() {
-  const filled = getFilled();
-  if (filled.length >= MAX_COFFEES) return filled;
+  // pick a random unfilled cup + confetti
+  const punchRandom = () => {
+    const filled = store.getArray(STORAGE_KEY);
+    if (filled.length >= MAX_COFFEES) return;
 
-  const remaining = [];
-  for (let i = 0; i < MAX_COFFEES; i++) {
-    if (!filled.includes(i)) remaining.push(i);
-  }
-  const pick = remaining[Math.floor(Math.random() * remaining.length)];
-  filled.push(pick);
-  setFilled(filled);
+    const remaining = Array.from({ length: MAX_COFFEES }, (_, i) => i)
+                           .filter(i => !filled.includes(i));
+    filled.push(remaining[Math.floor(Math.random() * remaining.length)]);
+    store.setArray(STORAGE_KEY, filled);
 
-  confetti({ particleCount: 25, spread: 60, origin: { y: 0.4 } });
-  return filled;
-}
+    confetti({ particleCount: 25, spread: 60, origin: { y: 0.4 } });
+  };
 
-// Update cups, status, confetti & reset link
-function updateStatus() {
-  const filled = getFilled();
-  const count = filled.length;
-  const status = document.getElementById('status');
-  const cupsContainer = document.getElementById('cups');
+  // render the cups row
+  const renderCups = () => {
+    const filled = store.getArray(STORAGE_KEY);
+    cupsEl.innerHTML = '';
+    for (let i = 0; i < MAX_COFFEES; i++) {
+      const cup = document.createElement('span');
+      cup.className = 'cup' + (filled.includes(i) ? ' filled' : '');
+      cup.textContent = '☕';
+      cupsEl.appendChild(cup);
+    }
+  };
 
-  status.textContent =
-    count >= MAX_COFFEES
+  // render status & reset link
+  const renderStatus = () => {
+    const filled = store.getArray(STORAGE_KEY);
+    const count  = filled.length;
+    statusEl.textContent = count >= MAX_COFFEES
       ? `🎉 You’ve earned a free coffee! (${count}/${MAX_COFFEES})`
       : `You’ve had ${count} of ${MAX_COFFEES} coffees.`;
 
-  cupsContainer.innerHTML = '';
-  for (let i = 0; i < MAX_COFFEES; i++) {
-    const cup = document.createElement('span');
-    cup.classList.add('cup');
-    cup.textContent = '☕';
-    if (filled.includes(i)) cup.classList.add('filled');
-    cupsContainer.appendChild(cup);
-  }
+    // big finale confetti
+    if (count === MAX_COFFEES && !window._confettiShown) {
+      confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+      window._confettiShown = true;
+    }
+    if (count < MAX_COFFEES) window._confettiShown = false;
 
-  // big finale confetti
-  if (count === MAX_COFFEES && !window._confettiShown) {
-    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
-    window._confettiShown = true;
-  }
-  if (count < MAX_COFFEES) window._confettiShown = false;
+    // reset link + star award
+    if (resetLinkEl) resetLinkEl.remove();
+    if (count >= MAX_COFFEES) {
+      resetLinkEl = document.createElement('a');
+      resetLinkEl.id = 'reset-link';
+      resetLinkEl.href = '#';
+      resetLinkEl.textContent = '🔄 Reset Card';
+      resetLinkEl.className = 'reset-link';
+      resetLinkEl.onclick = e => {
+        e.preventDefault();
+        const code = prompt('Barista code to reset:');
+        if (code === '1234') {
+          store.setNum(STAR_KEY, store.getNum(STAR_KEY) + 1);
+          localStorage.removeItem(STORAGE_KEY);
+          renderAll();
+        } else {
+          alert('❌ Incorrect code.');
+        }
+      };
+      cupsEl.closest('.card').append(resetLinkEl);
+    }
+  };
 
-  // reset link + star award
-  const old = document.getElementById('reset-link');
-  if (old) old.remove();
+  // render stars below
+  const renderStars = () => {
+    const count = store.getNum(STAR_KEY);
+    starsEl.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('span');
+      s.className = 'star';
+      s.textContent = '⭐';
+      starsEl.appendChild(s);
+    }
+  };
 
-  if (count >= MAX_COFFEES) {
-    const card = cupsContainer.closest('.card');
-    const resetLink = document.createElement('a');
-    resetLink.id = 'reset-link';
-    resetLink.href = '#';
-    resetLink.textContent = '🔄 Reset Card';
-    resetLink.style.display = 'block';
-    resetLink.style.textAlign = 'center';
-    resetLink.style.margin = '12px 0';
-    resetLink.style.cursor = 'pointer';
+  // call all renders
+  const renderAll = () => {
+    renderCups();
+    renderStatus();
+    renderStars();
+  };
 
-    resetLink.addEventListener('click', e => {
-      e.preventDefault();
-      const code = prompt('Barista code to reset:');
-      if (code === '1234') {
-        // give a star, clear punches, re-render
-        setStars(getStars() + 1);
-        localStorage.removeItem(STORAGE_KEY);
-        updateStatus();
-        updateStars();
-      } else {
-        alert('❌ Incorrect code.');
-      }
-    });
-
-    card.appendChild(resetLink);
-  }
-}
-
-// On page load, handle ?punch=1 then render everything
-document.addEventListener('DOMContentLoaded', () => {
-  const url = new URL(window.location.href);
-  if (url.searchParams.get('punch') === '1') {
-    punchRandom();
-    url.searchParams.delete('punch');
-    history.replaceState(null, '', url.pathname);
-  }
-
-  updateStatus();
-  updateStars();
-});
+  // on load (and ?punch=1), run punch + render
+  document.addEventListener('DOMContentLoaded', () => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('punch') === '1') {
+      punchRandom();
+      history.replaceState(null, '', url.pathname);
+    }
+    renderAll();
+  });
+})();

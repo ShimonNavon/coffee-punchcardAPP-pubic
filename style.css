@@ -9,8 +9,9 @@ body {
   );
   font-family: 'Segoe UI', sans-serif;
 
-  /* center the card in the viewport */
+  /* center card & stars vertically */
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
@@ -88,7 +89,8 @@ body {
 .stars {
   display: flex;
   justify-content: center;
-  padding: 12px 0 24px;  /* space above & below */
+  margin-top: 16px;    /* space between card and stars */
+  margin-bottom: 24px; /* extra breathing room below */
 }
 
 .star {
