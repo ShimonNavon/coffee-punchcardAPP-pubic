@@ -1,16 +1,21 @@
 /* page background + centering */
 body {
   margin: 0;
+  /* Rasta/Reggae diagonal stripes */
   background: repeating-linear-gradient(
     135deg,
-    #9ED9CC 20px,
-    #F7F6F2 40px,
-    #72C1AA 60px
+    #9ED9CC, #9ED9CC 20px,
+    #F7F6F2, #F7F6F2 40px,
+    #72C1AA, #72C1AA 60px
   );
   font-family: 'Segoe UI', sans-serif;
+
+  /* STACK card and stars vertically */
   display: flex;
+  flex-direction: column;      /* ← ADDED */
   justify-content: center;
   align-items: center;
+
   min-height: 100vh;
 }
 
@@ -75,21 +80,20 @@ body {
   opacity: 1;
 }
 
-/* star‐rank container */
-.stars {
-  text-align: center;
-  margin: 12px 0 24px;
-}
-
-/* each star icon */
-.star {
-  font-size: 1.6em;
-  margin: 0 4px;
-}
-
 .note {
   font-size: 0.95em;
   color: #777;
   text-align: center;
   margin: 0 16px 16px;
+}
+
+/* —— star ranking —— */
+.stars {
+  text-align: center;
+  margin: 12px 0 24px;
+}
+
+.star {
+  font-size: 1.6em;
+  margin: 0 4px;
 }
