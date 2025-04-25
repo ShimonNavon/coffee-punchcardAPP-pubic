@@ -20,14 +20,22 @@ function punchRandom() {
   const filled = getFilled();
   if (filled.length >= MAX_COFFEES) return filled;
 
+  // — pick a random unfilled slot —
   const remaining = [];
   for (let i = 0; i < MAX_COFFEES; i++) {
     if (!filled.includes(i)) remaining.push(i);
   }
-
   const pick = remaining[Math.floor(Math.random() * remaining.length)];
   filled.push(pick);
   setFilled(filled);
+
+  // — small confetti burst on every punch —
+  confetti({
+    particleCount: 25,
+    spread: 60,
+    origin: { y: 0.4 }
+  });
+
   return filled;
 }
 
@@ -55,7 +63,7 @@ function updateStatus() {
     cupsContainer.appendChild(cup);
   }
 
-  // ——— confetti on completion ———
+  // ——— big confetti on completion ———
   if (count === MAX_COFFEES) {
     if (!window._confettiShown) {
       confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
