@@ -66,12 +66,10 @@ function updateStatus() {
   }
 
   // ——— reset link logic ———
-  // remove any old link
   const old = document.getElementById('reset-link');
   if (old) old.remove();
 
   if (count >= MAX_COFFEES) {
-    // append a Reset link to the card
     const card = cupsContainer.closest('.card');
     const resetLink = document.createElement('a');
     resetLink.id = 'reset-link';
@@ -87,7 +85,6 @@ function updateStatus() {
       const code = prompt('Barista code to reset:');
       if (code === '1234') {
         localStorage.removeItem(STORAGE_KEY);
-        sessionStorage.removeItem('didPunch');
         updateStatus();
       } else {
         alert('❌ Incorrect code.');
@@ -98,18 +95,14 @@ function updateStatus() {
   }
 }
 
-// On load: only punch if ?punch=1 and not already done this session
+// On load: punch once if we see ?punch=1, then strip it out
 document.addEventListener('DOMContentLoaded', () => {
   const url = new URL(window.location.href);
 
-  if (
-    url.searchParams.get('punch') === '1' &&
-    !sessionStorage.getItem('didPunch')
-  ) {
+  if (url.searchParams.get('punch') === '1') {
     punchRandom();
-    sessionStorage.setItem('didPunch', '1');
 
-    // clean the URL so refresh won't re-fire the punch
+    // clean the URL so a reload won’t re-fire the punch
     url.searchParams.delete('punch');
     history.replaceState(null, '', url.pathname);
   }
