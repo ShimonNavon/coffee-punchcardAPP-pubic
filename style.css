@@ -1,21 +1,12 @@
 /* page background + centering */
 body {
   margin: 0;
-  /* old light-brown background, commented out */
-  /* background: #fff8f0; */
-
-  /* Rasta/Reggae diagonal stripes */
   background: repeating-linear-gradient(
     135deg,
-/* replace your old stops with these: */
-#9ED9CC,    /* mint background  */
-#9ED9CC 20px,
-#F7F6F2,    /* ribbon white-ish */
-#F7F6F2 40px,
-#72C1AA,    /* deeper mint accent */
-#72C1AA 60px
+    #9ED9CC 20px,
+    #F7F6F2 40px,
+    #72C1AA 60px
   );
-  
   font-family: 'Segoe UI', sans-serif;
   display: flex;
   justify-content: center;
@@ -74,15 +65,26 @@ body {
 
 .cup {
   font-size: 2em;
-  display: inline-block;                  /* ensure transform works smoothly */
+  display: inline-block;
   transition: transform 0.3s, opacity 0.3s;
-  opacity: 0.2;                           /* start very faded */
+  opacity: 0.2;
 }
 
 .cup.filled {
   transform: scale(1.2);
-  opacity: 1;              /* fade in to full opacity */
-  /* filter: none;  you can leave this if you were using grayscale before */
+  opacity: 1;
+}
+
+/* star‐rank container */
+.stars {
+  text-align: center;
+  margin: 12px 0 24px;
+}
+
+/* each star icon */
+.star {
+  font-size: 1.6em;
+  margin: 0 4px;
 }
 
 .note {
